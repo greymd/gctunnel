@@ -79,7 +79,7 @@ Convert date/time in Gmail message into Google Calender's event!
 ```bash
 $ gctunnel messages 'from:noreply@example.com subject:Appointment newer_than:1d' \
   | head -n 1 | jq .id \
-  | xargs -I@ go run ./gctunnel.go message @ | jq -r .body
+  | xargs -I@ gctunnel message @ | jq -r .body
 Thank you for your appointoment.
 You appointment time is [2020/01/01 17:30].
 ```
@@ -90,7 +90,7 @@ If this script is running once a day, you won't miss your important appointoment
 #!/bin/bash
 eventDate=$(gctunnel messages 'from:noreply@example.com subject:Appointment newer_than:1d' \
   | head -n 1 | jq .id \
-  | xargs -I@ go run ./gctunnel.go message @ | jq -r .body \
+  | xargs -I@ gctunnel message @ | jq -r .body \
   | grep -o '\[[^]]*\]' | tr -d '[]' | date -f- --rfc-3339=seconds | tr ' ' T)
 
 gctunnel create-event --summary="Appointment" --start="$eventDate" --end="$(date -d "$eventDate 30 minutes" --rfc-3339=seconds | tr ' ' T)"
