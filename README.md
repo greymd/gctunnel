@@ -1,4 +1,4 @@
-# GMail / Google Calendar CLI for Tunneling
+# GMail / Google Calendar CLI client for event tunneling 
 
 ## Installation
 
@@ -71,10 +71,10 @@ $ gctunnel messages
 => Your emails in "inbox" will be shown.
 ```
 
-Please make sure `credential.json` and `token.json` are need to plase on the current directory.
+Please make sure `credential.json` and `token.json` are need to be located on the current directory.
 
 ## Purpose of this tool
-To convert datetime in GMail message into Google Calender's event!
+Convert date/time in GMail message into Google Calender's event!
 
 ```bash
 $ gctunnel messages 'from:noreply@example.com subject:Appointment newer_than:1d' \
@@ -83,9 +83,9 @@ $ gctunnel messages 'from:noreply@example.com subject:Appointment newer_than:1d'
 Thank you for your appointoment.
 You appointment time is [2020/01/01 17:30].
 ```
-=> GMail message can be displayed.
+=> Check GMail message includes date or time.
 
-Run this script once a day, you won't miss your important appointoment!
+If this script is running once a day, you won't miss your important appointoments!
 ```bash
 #!/bin/bash
 eventDate=$(gctunnel messages 'from:noreply@example.com subject:Appointment newer_than:1d' \
