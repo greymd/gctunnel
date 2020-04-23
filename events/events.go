@@ -54,17 +54,27 @@ func ListCalendars(client *http.Client) {
 }
 
 // ListEvents ... List events
-func ListEvents(client *http.Client, calendarID string) {
+func ListEvents(client *http.Client, calendarID string, since string) {
 	svc, err := calendar.New(client)
 	if err != nil {
 		log.Fatalf("Unable to create Calendar service: %v", err)
 	}
-	// res, err := svc.Events.List(calendarID).Fields("items(start,end,summary)", "nextPageToken").UpdatedMin("2020-04-01T00:00:00Z").Do()
-	res, err := svc.Events.List(calendarID).Fields("items(start,end,summary)", "nextPageToken").UpdatedMin("2020-04-01T00:00:00Z").Do()
-	if err != nil {
-		log.Fatalf("Unable to retrieve calendar events list: %v", err)
-	}
-	for _, v := range res.Items {
-		fmt.Printf("Calendar ID %q start: %v:, end: %v, summary:%q\n", calendarID, v.Start, v.End, v.Summary)
+	pageToken := ""
+	for {
+		req := svc.Events.List(calendarID).Fields("items(start,end,summary)", "nextPageToken").TimeMin(since)
+		if pageToken != "" {
+			req.PageToken(pageToken)
+		}
+		res, err := req.Do()
+		if err != nil {
+			log.Fatalf("Unable to retrieve calendar events list: %v", err)
+		}
+		for _, v := range res.Items {
+			fmt.Printf("Calendar ID %q start: %v:, end: %v, summary:%q\n", calendarID, v.Start, v.End, v.Summary)
+		}
+		if res.NextPageToken == "" {
+			break
+		}
+		pageToken = res.NextPageToken
 	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"time"
 
 	"github.com/docopt/docopt-go"
 	"github.com/greymd/gctunnel/auth"
@@ -30,7 +31,7 @@ Commands:
   msgs        Search messages.
   msg         Show body of single message.
   cals        List calendars.
-  evts        List events, starting within last a week by default, on specified calendar.
+  evts        List events, starting within last month by default, on specified calendar.
   new-evt     Create new event on the specified calendar.
 
 Arguments:
@@ -65,7 +66,11 @@ func main() {
 	} else if args["cals"].(bool) {
 		events.ListCalendars(client)
 	} else if args["evts"].(bool) {
-		events.ListEvents(client, args["<CAL_ID>"].(string))
+		since := args["--since"]
+		if since == nil {
+			since = getLastMonth()
+		}
+		events.ListEvents(client, args["<CAL_ID>"].(string), since.(string))
 	} else if args["new-evt"].(bool) {
 		description := args["--description"]
 		if description == nil {
@@ -79,4 +84,10 @@ func main() {
 		events.CreateEvent(client, args["<CAL_ID>"].(string), args["--summary"].(string), description.(string), args["--start"].(string), args["--end"].(string), timezone.(string))
 	}
 	os.Exit(0)
+}
+
+func getLastMonth() string {
+	now := time.Now()
+	then := now.AddDate(0, -1, 0)
+	return then.Format(time.RFC3339)
 }
