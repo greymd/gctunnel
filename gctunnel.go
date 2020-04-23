@@ -39,9 +39,9 @@ Commands:
   create-event  Create new event on the specified calendar
 
 Arguments:
-  <QUERY>        Query for searching GMail messages. See Ref[2]. [default: in:inbox]
-  <MESSAGE_ID>   Identifier of the message in GMail. Value of "id" in results of 'messages'.
-  <CALENDAR_ID>  Identifier of the calendar. Value of "id" in results of 'calenders'. [default: (authorized GMail address)]
+  <QUERY>        Query for searching Gmail messages. See Ref[2]. [default: in:inbox]
+  <MESSAGE_ID>   Identifier of the message in Gmail. Value of "id" in results of 'messages'.
+  <CALENDAR_ID>  Identifier of the calendar. Value of "id" in results of 'calenders'. [default: (authorized Gmail address)]
   <COLOR_ID>     Specify color of the event. Value of "colorID" in results of "events".
   <text>         Free format text.
   <datetime>     A combined date-time value formatted according to RFC3339, e.g "2020-04-23T00:00:00Z"

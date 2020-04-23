@@ -1,4 +1,4 @@
-# GMail / Google Calendar CLI client for event tunneling 
+# Gmail / Google Calendar CLI client for event tunneling 
 
 ## Installation
 
@@ -33,9 +33,9 @@ Commands:
   create-event  Create new event on the specified calendar
 
 Arguments:
-  <QUERY>        Query for searching GMail messages. See Ref[2]. [default: in:inbox]
-  <MESSAGE_ID>   Identifier of the message in GMail. Value of "id" in results of 'messages'.
-  <CALENDAR_ID>  Identifier of the calendar. Value of "id" in results of 'calenders'. [default: (authorized GMail address)]
+  <QUERY>        Query for searching Gmail messages. See Ref[2]. [default: in:inbox]
+  <MESSAGE_ID>   Identifier of the message in Gmail. Value of "id" in results of 'messages'.
+  <CALENDAR_ID>  Identifier of the calendar. Value of "id" in results of 'calenders'. [default: (authorized Gmail address)]
   <COLOR_ID>     Specify color of the event. Value of "colorID" in results of "events".
   <text>         Free format text.
   <datetime>     A combined date-time value formatted according to RFC3339, e.g "2020-04-23T00:00:00Z"
@@ -74,7 +74,7 @@ $ gctunnel messages
 Please make sure `credential.json` and `token.json` are need to be located on the current directory.
 
 ## Purpose of this tool
-Convert date/time in GMail message into Google Calender's event!
+Convert date/time in Gmail message into Google Calender's event!
 
 ```bash
 $ gctunnel messages 'from:noreply@example.com subject:Appointment newer_than:1d' \
@@ -83,7 +83,7 @@ $ gctunnel messages 'from:noreply@example.com subject:Appointment newer_than:1d'
 Thank you for your appointoment.
 You appointment time is [2020/01/01 17:30].
 ```
-=> Check GMail message includes date or time.
+=> Check Gmail message includes date or time.
 
 If this script is running once a day, you won't miss your important appointoments!
 ```bash
@@ -99,7 +99,7 @@ gctunnel create-event --summary="Appointment" --start="$eventDate" --end="$(date
 
 
 ## Why I made it ?
-I know there are several CLI tools providing GMail or Google Calendar functionalities.
+I know there are several CLI tools providing Gmail or Google Calendar functionalities.
 
 i.e:
 * [insanum/gcalcli](https://github.com/insanum/gcalcli)
@@ -114,4 +114,4 @@ For example, we have to authorize multiple applications and requires multiple Cl
 And also, I want to avoid combining multiple tools developed by individuals or multiple language like Ruby, Python, Node.js like above.
 Because even one of them loses compatibility or stops maintenance, entire script will stop to work.
 
-Unfortunately, as far as I searched, there is no CLI tool providing entire functionalities of GMail/Google Calendar both.
+Unfortunately, as far as I searched, there is no CLI tool providing entire functionalities of Gmail/Google Calendar both.
