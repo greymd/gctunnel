@@ -9,7 +9,7 @@ import (
 )
 
 // CreateEvent ... Create event
-func CreateEvent(client *http.Client, calendarID string, summary string, description string, startDateTime string, endDateTime string, timezone string) {
+func CreateEvent(client *http.Client, calendarID string, summary string, description string, startDateTime string, endDateTime string, timezone string, colorID string) {
 	srv, err := calendar.New(client)
 	if err != nil {
 		log.Fatalf("Unable to retrieve Calendar client: %v", err)
@@ -19,6 +19,7 @@ func CreateEvent(client *http.Client, calendarID string, summary string, descrip
 		Summary:     summary,
 		Location:    "",
 		Description: description,
+		ColorId:     colorID,
 		Start: &calendar.EventDateTime{
 			DateTime: startDateTime,
 			TimeZone: timezone,
@@ -49,7 +50,8 @@ func ListCalendars(client *http.Client) {
 
 	for _, v := range listRes.Items {
 		cal, _ := svc.Calendars.Get(v.Id).Do()
-		fmt.Printf("Calendar ID: %v, %v\n", v.Id, cal.Summary)
+		j, _ := cal.MarshalJSON()
+		fmt.Println(string(j))
 	}
 }
 
@@ -61,7 +63,7 @@ func ListEvents(client *http.Client, calendarID string, since string) {
 	}
 	pageToken := ""
 	for {
-		req := svc.Events.List(calendarID).Fields("items(start,end,summary)", "nextPageToken").TimeMin(since)
+		req := svc.Events.List(calendarID).Fields("items(id,colorId,start,end,summary)", "nextPageToken").TimeMin(since)
 		if pageToken != "" {
 			req.PageToken(pageToken)
 		}
@@ -70,7 +72,8 @@ func ListEvents(client *http.Client, calendarID string, since string) {
 			log.Fatalf("Unable to retrieve calendar events list: %v", err)
 		}
 		for _, v := range res.Items {
-			fmt.Printf("Calendar ID %q start: %v:, end: %v, summary:%q\n", calendarID, v.Start, v.End, v.Summary)
+			j, _ := v.MarshalJSON()
+			fmt.Println(string(j))
 		}
 		if res.NextPageToken == "" {
 			break

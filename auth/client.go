@@ -1,5 +1,8 @@
 package auth
 
+// Most of the part of this file is copied by public document
+// https://developers.google.com/calendar/quickstart/go
+
 import (
 	"context"
 	"encoding/json"
@@ -15,12 +18,18 @@ import (
 	"google.golang.org/api/gmail/v1"
 )
 
+// TokFile ... Token file
+var TokFile = "token.json"
+
+// CredFile ... Credential file
+var CredFile = "credentials.json"
+
 // Retrieve a token, saves the token, then returns the generated client.
 func getClient(config *oauth2.Config) *http.Client {
 	// The file token.json stores the user's access and refresh tokens, and is
 	// created automatically when the authorization flow completes for the first
 	// time.
-	tokFile := "token.json"
+	tokFile := TokFile
 	tok, err := tokenFromFile(tokFile)
 	if err != nil {
 		tok = getTokenFromWeb(config)
@@ -72,7 +81,7 @@ func saveToken(path string, token *oauth2.Token) {
 
 // GetClient ... get http client
 func GetClient() *http.Client {
-	b, err := ioutil.ReadFile("credentials.json")
+	b, err := ioutil.ReadFile(CredFile)
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}
@@ -84,4 +93,9 @@ func GetClient() *http.Client {
 	}
 	client := getClient(config)
 	return client
+}
+
+// RefreshToken ... Remove token
+func RefreshToken() error {
+	return os.Remove(TokFile)
 }

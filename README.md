@@ -1,5 +1,16 @@
 # Gmail to Google Calendar tunneling CLI 
 
+## Installation
+
+## Getting Started
+
+(1) Go to 
+```
+$ go run ./main.go auth
+Go to the following link in your browser then type the authorization code:
+https://accounts.google.com/o/oauth2/auth?access_type=...
+!! Paste your credentials provided by the browser
+```
 
 ## Why I made it ?
 I know there are several CLI tools providing Gmail or Google Calendar functionalities.
