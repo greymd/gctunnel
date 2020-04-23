@@ -91,9 +91,9 @@ If this script is running once a day, you won't miss your important appointoment
 eventDate=$(gctunnel messages 'from:noreply@example.com subject:Appointment newer_than:1d' \
   | head -n 1 | jq .id \
   | xargs -I@ go run ./gctunnel.go message @ | jq -r .body \
-  | grep -o '\[[^]]*\]' | tr -d '[]' | date -f- --rfc-3339=seconds)
+  | grep -o '\[[^]]*\]' | tr -d '[]' | date -f- --rfc-3339=seconds | tr ' ' T)
 
-gtunnel create-event --summary="Appointment" --start="$eventDate" --end="$(date -d "$eventDate 30 minutes" --rfc-3339=seconds)"
+gctunnel create-event --summary="Appointment" --start="$eventDate" --end="$(date -d "$eventDate 30 minutes" --rfc-3339=seconds | tr ' ' T)"
 ```
 => New event titled "Appointment" will be created on your Google Calendar.
 
