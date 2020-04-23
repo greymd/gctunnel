@@ -2,15 +2,101 @@
 
 ## Installation
 
+```
+$ go get -u github.com/greymd/gctunnel
+```
+
+## Usage
+
+```
+Usage:
+  gctunnel [Options]
+  gctunnel authorize
+  gctunnel profile
+  gctunnel messages [<QUERY>]
+  gctunnel message <MESSAGE_ID>
+  gctunnel calendars
+  gctunnel events [<CALENDAR_ID>] [--since=<datetime>]
+  gctunnel create-event [<CALENDAR_ID>] --summary=<text> --start=<datetime> --end=<datetime> [--color=<COLOR_ID>] [--description=<text>] [--timezone=<tz>]
+
+Options:
+  -h, --help      Show help.
+  -V, --version   Show version
+
+Commands:
+  authorize     credentials.json file is required. Visit Ref[1] and download under "OAuth 2.0 Client ID" and rename the file
+  profile       Show authorized account information
+  messages      List messages
+  message       Show body of single message
+  calendars     List Calendars
+  events        List events, starting within last month by default, on specified calendar
+  create-event  Create new event on the specified calendar
+
+Arguments:
+  <QUERY>        Query for searching Gmail messages. See Ref[2]. [default: in:inbox]
+  <MESSAGE_ID>   Identifier of the message in Gmail. Value of "id" in results of 'messages'.
+  <CALENDAR_ID>  Identifier of the calendar. Value of "id" in results of 'calenders'. [default: (authorized GMail address)]
+  <COLOR_ID>     Specify color of the event. Value of "colorID" in results of "events".
+  <text>         Free format text.
+  <datetime>     A combined date-time value formatted according to RFC3339, e.g "2020-04-23T00:00:00Z"
+  <tz>           Time zone name with IANA Time Zone Database name, e.g "Asia/Tokyo". [default: UTC]
+
+Ref:
+  [1] https://console.developers.google.com/apis/credentials
+  [2] https://support.google.com/mail/answer/7190
+```
+
 ## Getting Started
 
-(1) Go to 
+(1) Go to https://console.developers.google.com/ and create new project
+
+(2) Create new OAuth 2.0 Client ID and download JSON file including client ID / secret. Rename it to `credentials.json`
+
+(3) Run `gctunnel authorize` and follows the introduction
 ```
-$ go run ./main.go auth
+$ gctunnel authorize
 Go to the following link in your browser then type the authorization code:
 https://accounts.google.com/o/oauth2/auth?access_type=...
 !! Paste your credentials provided by the browser
 ```
+=> `token.json` file will be created on the current directory.
+
+(4) Run commands
+
+```
+$ gctunnel profile
+=> Your email address will be shown.
+
+$ gctunnel messages
+=> Your emails in "inbox" will be shown.
+```
+
+Please make sure `credentials.json` and `token.json` are need to plase on the current directory.
+
+## Purpose of this tool
+To convert datetime in GMail message into Google Calender's event!
+
+```bash
+$ gctunnel messages 'from:noreply@example.com subject:Appointment newer_than:1d' \
+  | head -n 1 | jq .id \
+  | xargs -I@ go run ./gctunnel.go message @ | jq -r .body
+Thank you for your appointoment.
+You appointment time is [2020/01/01 17:30].
+```
+=> Gmail message can be displayed.
+
+Run this script once a day, you won't miss your important appointoment!
+```bash
+#!/bin/bash
+eventDate=$(gctunnel messages 'from:noreply@example.com subject:Appointment newer_than:1d' \
+  | head -n 1 | jq .id \
+  | xargs -I@ go run ./gctunnel.go message @ | jq -r .body \
+  | grep -o '\[[^]]*\]' | tr -d '[]' | date -f- --rfc-3339=seconds)
+
+gtunnel create-event --summary="Appointment" --start="$eventDate" --end="$(date -d "$eventDate 30 minutes" --rfc-3339=seconds)"
+```
+=> New event titled "Appointment" will be created on your Google Calendar.
+
 
 ## Why I made it ?
 I know there are several CLI tools providing Gmail or Google Calendar functionalities.
