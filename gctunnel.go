@@ -30,7 +30,7 @@ Options:
   -V, --version   Show version
 
 Commands:
-  authorize     credentials.json file is required. Visit Ref[1] and download under "OAuth 2.0 Client ID" and rename the file
+  authorize     credential.json file is required. Visit Ref[1] and download under "OAuth 2.0 Client ID" and rename the file
   profile       Show authorized account information
   messages      List messages
   message       Show body of single message
@@ -39,8 +39,8 @@ Commands:
   create-event  Create new event on the specified calendar
 
 Arguments:
-  <QUERY>        Query for searching Gmail messages. See Ref[2]. [default: in:inbox]
-  <MESSAGE_ID>   Identifier of the message in Gmail. Value of "id" in results of 'messages'.
+  <QUERY>        Query for searching GMail messages. See Ref[2]. [default: in:inbox]
+  <MESSAGE_ID>   Identifier of the message in GMail. Value of "id" in results of 'messages'.
   <CALENDAR_ID>  Identifier of the calendar. Value of "id" in results of 'calenders'. [default: (authorized GMail address)]
   <COLOR_ID>     Specify color of the event. Value of "colorID" in results of "events".
   <text>         Free format text.

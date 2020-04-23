@@ -1,4 +1,4 @@
-# Gmail to Google Calendar tunneling CLI 
+# GMail / Google Calendar CLI for Tunneling
 
 ## Installation
 
@@ -24,7 +24,7 @@ Options:
   -V, --version   Show version
 
 Commands:
-  authorize     credentials.json file is required. Visit Ref[1] and download under "OAuth 2.0 Client ID" and rename the file
+  authorize     credential.json file is required. Visit Ref[1] and download under "OAuth 2.0 Client ID" and rename the file
   profile       Show authorized account information
   messages      List messages
   message       Show body of single message
@@ -33,8 +33,8 @@ Commands:
   create-event  Create new event on the specified calendar
 
 Arguments:
-  <QUERY>        Query for searching Gmail messages. See Ref[2]. [default: in:inbox]
-  <MESSAGE_ID>   Identifier of the message in Gmail. Value of "id" in results of 'messages'.
+  <QUERY>        Query for searching GMail messages. See Ref[2]. [default: in:inbox]
+  <MESSAGE_ID>   Identifier of the message in GMail. Value of "id" in results of 'messages'.
   <CALENDAR_ID>  Identifier of the calendar. Value of "id" in results of 'calenders'. [default: (authorized GMail address)]
   <COLOR_ID>     Specify color of the event. Value of "colorID" in results of "events".
   <text>         Free format text.
@@ -50,7 +50,7 @@ Ref:
 
 (1) Go to https://console.developers.google.com/ and create new project
 
-(2) Create new OAuth 2.0 Client ID and download JSON file including client ID / secret. Rename it to `credentials.json`
+(2) Create new OAuth 2.0 Client ID and download JSON file including client ID / secret. Rename it to `credential.json`
 
 (3) Run `gctunnel authorize` and follows the introduction
 ```
@@ -71,7 +71,7 @@ $ gctunnel messages
 => Your emails in "inbox" will be shown.
 ```
 
-Please make sure `credentials.json` and `token.json` are need to plase on the current directory.
+Please make sure `credential.json` and `token.json` are need to plase on the current directory.
 
 ## Purpose of this tool
 To convert datetime in GMail message into Google Calender's event!
@@ -83,7 +83,7 @@ $ gctunnel messages 'from:noreply@example.com subject:Appointment newer_than:1d'
 Thank you for your appointoment.
 You appointment time is [2020/01/01 17:30].
 ```
-=> Gmail message can be displayed.
+=> GMail message can be displayed.
 
 Run this script once a day, you won't miss your important appointoment!
 ```bash
@@ -99,17 +99,19 @@ gtunnel create-event --summary="Appointment" --start="$eventDate" --end="$(date 
 
 
 ## Why I made it ?
-I know there are several CLI tools providing Gmail or Google Calendar functionalities.
+I know there are several CLI tools providing GMail or Google Calendar functionalities.
 
 i.e:
 * [insanum/gcalcli](https://github.com/insanum/gcalcli)
 * [ThomasHabets/cmdg](https://github.com/ThomasHabets/cmdg)
 * [yoshinari-nomura/glima](https://github.com/yoshinari-nomura/glima)
 
-Technically, what this tool aiming can be done by combining above tools.
+Technically, the purpose of this tool can be done by combining above tools.
 
 However, combining multiple tools may cause many troubles in the future.
 For example, we have to authorize multiple applications and requires multiple Client ID / Secret.
+
 And also, I want to avoid combining multiple tools developed by individuals or multiple language like Ruby, Python, Node.js like above.
 Because even one of them loses compatibility or stops maintenance, entire script will stop to work.
-Unfortunately, as far as I searched, there is no CLI tool providing entire functionalities of Gmail/Google Calendar both.
+
+Unfortunately, as far as I searched, there is no CLI tool providing entire functionalities of GMail/Google Calendar both.

@@ -22,7 +22,7 @@ import (
 var TokFile = "token.json"
 
 // CredFile ... Credential file
-var CredFile = "credentials.json"
+var CredFile = "credential.json"
 
 // Retrieve a token, saves the token, then returns the generated client.
 func getClient(config *oauth2.Config) *http.Client {
