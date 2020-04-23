@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"google.golang.org/api/gmail/v1"
@@ -22,7 +21,7 @@ type messageObject struct {
 
 var userID = "me"
 
-func createMessage(msg *gmail.Message, beLong bool) messageObject {
+func createMessage(msg *gmail.Message, beLong bool) (messageObject, error) {
 	subject := ""
 	to := ""
 	from := ""
@@ -51,7 +50,7 @@ func createMessage(msg *gmail.Message, beLong bool) messageObject {
 		}
 		bodyBinary, err := base64.URLEncoding.DecodeString(bodyEncoded)
 		if err != nil {
-			log.Fatalf("Unable to decode message body %v: %v", msg.Id, err)
+			return messageObject{}, fmt.Errorf("Unable to decode message body %v: %v", msg.Id, err)
 		} else {
 			body = string(bodyBinary)
 		}
@@ -64,7 +63,7 @@ func createMessage(msg *gmail.Message, beLong bool) messageObject {
 		Subject: subject,
 		Snippet: msg.Snippet,
 		Body:    body,
-	}
+	}, nil
 }
 
 // Get body as text as much as possible.
@@ -89,23 +88,28 @@ func printMsg(msg messageObject) {
 }
 
 // Get ... Get single message
-func Get(client *http.Client, id string) {
+func Get(client *http.Client, id string) error {
 	srv, err := gmail.New(client)
 	if err != nil {
-		log.Fatalf("Unable to create Gmail service: %v", err)
+		return fmt.Errorf("Unable to create Gmail service: %v", err)
 	}
 	msg, err := srv.Users.Messages.Get(userID, id).Format("full").Do()
 	if err != nil {
-		log.Fatalf("Unable to retrieve message %v: %v", id, err)
+		return fmt.Errorf("Unable to retrieve message %v: %v", id, err)
 	}
-	printMsg(createMessage(msg, true))
+	out, err := createMessage(msg, true)
+	if err != nil {
+		return err
+	}
+	printMsg(out)
+	return nil
 }
 
 // List ... Get multiple messages
-func List(client *http.Client, query string) {
+func List(client *http.Client, query string) error {
 	srv, err := gmail.New(client)
 	if err != nil {
-		log.Fatalf("Unable to create Gmail service: %v", err)
+		fmt.Errorf("Unable to create Gmail service: %v", err)
 	}
 	pageToken := ""
 	for {
@@ -115,21 +119,23 @@ func List(client *http.Client, query string) {
 		}
 		r, err := req.Do()
 		if err != nil {
-			log.Fatalf("Unable to retrieve messages: %v", err)
+			return fmt.Errorf("Unable to retrieve messages: %v", err)
 		}
-
 		for _, m := range r.Messages {
 			msg, err := srv.Users.Messages.Get("me", m.Id).Do()
 			if err != nil {
-				log.Fatalf("Unable to retrieve message %v: %v", m.Id, err)
+				return fmt.Errorf("Unable to retrieve message %v: %v", m.Id, err)
 			}
-
-			printMsg(createMessage(msg, false))
+			out, err := createMessage(msg, false)
+			if err != nil {
+				return err
+			}
+			printMsg(out)
 		}
-
 		if r.NextPageToken == "" {
 			break
 		}
 		pageToken = r.NextPageToken
 	}
+	return nil
 }

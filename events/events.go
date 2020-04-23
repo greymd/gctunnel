@@ -2,17 +2,16 @@ package events
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"google.golang.org/api/calendar/v3"
 )
 
 // CreateEvent ... Create event
-func CreateEvent(client *http.Client, calendarID string, summary string, description string, startDateTime string, endDateTime string, timezone string, colorID string) {
+func CreateEvent(client *http.Client, calendarID string, summary string, description string, startDateTime string, endDateTime string, timezone string, colorID string) error {
 	srv, err := calendar.New(client)
 	if err != nil {
-		log.Fatalf("Unable to retrieve Calendar client: %v", err)
+		return fmt.Errorf("Unable to retrieve Calendar client: %v", err)
 	}
 
 	event := &calendar.Event{
@@ -32,20 +31,21 @@ func CreateEvent(client *http.Client, calendarID string, summary string, descrip
 
 	fixedEvent, err := srv.Events.Insert(calendarID, event).Do()
 	if err != nil {
-		log.Fatalf("Unable to create event. %v\n", err)
+		return fmt.Errorf("Unable to create event: %v", err)
 	}
 	fmt.Printf("Event created: %s\n", fixedEvent.HtmlLink)
+	return nil
 }
 
 // ListCalendars ... list calenders
-func ListCalendars(client *http.Client) {
+func ListCalendars(client *http.Client) error {
 	svc, err := calendar.New(client)
 	if err != nil {
-		log.Fatalf("Unable to create Calendar service: %v", err)
+		return fmt.Errorf("Unable to create Calendar service: %v", err)
 	}
 	listRes, err := svc.CalendarList.List().Fields("items/id").Do()
 	if err != nil {
-		log.Fatalf("Unable to retrieve list of calendars: %v", err)
+		return fmt.Errorf("Unable to retrieve list of calendars: %v", err)
 	}
 
 	for _, v := range listRes.Items {
@@ -53,13 +53,14 @@ func ListCalendars(client *http.Client) {
 		j, _ := cal.MarshalJSON()
 		fmt.Println(string(j))
 	}
+	return nil
 }
 
 // ListEvents ... List events
-func ListEvents(client *http.Client, calendarID string, since string) {
+func ListEvents(client *http.Client, calendarID string, since string) error {
 	svc, err := calendar.New(client)
 	if err != nil {
-		log.Fatalf("Unable to create Calendar service: %v", err)
+		return fmt.Errorf("Unable to create Calendar service: %v", err)
 	}
 	pageToken := ""
 	for {
@@ -69,7 +70,7 @@ func ListEvents(client *http.Client, calendarID string, since string) {
 		}
 		res, err := req.Do()
 		if err != nil {
-			log.Fatalf("Unable to retrieve calendar events list: %v", err)
+			return fmt.Errorf("Unable to retrieve calendar events list: %v", err)
 		}
 		for _, v := range res.Items {
 			j, _ := v.MarshalJSON()
@@ -80,4 +81,5 @@ func ListEvents(client *http.Client, calendarID string, since string) {
 		}
 		pageToken = res.NextPageToken
 	}
+	return nil
 }
