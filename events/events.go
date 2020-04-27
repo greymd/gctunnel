@@ -83,3 +83,18 @@ func ListEvents(client *http.Client, calendarID string, since string) error {
 	}
 	return nil
 }
+
+// GetEvent ... Get events
+func GetEvent(client *http.Client, calendarID string, eventID string) error {
+	svc, err := calendar.New(client)
+	if err != nil {
+		return fmt.Errorf("Unable to create Calendar service: %v", err)
+	}
+	res, err := svc.Events.Get(calendarID, eventID).Do()
+	if err != nil {
+		return fmt.Errorf("Unable to retrieve event: %v", err)
+	}
+	j, _ := res.MarshalJSON()
+	fmt.Println(string(j))
+	return nil
+}

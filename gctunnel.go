@@ -12,7 +12,7 @@ import (
 	"github.com/greymd/gctunnel/messages"
 )
 
-var appVersion = `1.0.0`
+var appVersion = `1.1.0`
 
 var usage = `
 Usage:
@@ -23,6 +23,7 @@ Usage:
   gctunnel message <MESSAGE_ID>
   gctunnel calendars
   gctunnel events [<CALENDAR_ID>] [--since=<datetime>]
+  gctunnel event <EVENT_ID> [<CALENDAR_ID>]
   gctunnel create-event [<CALENDAR_ID>] --summary=<text> --start=<datetime> --end=<datetime> [--color=<COLOR_ID>] [--description=<text>] [--timezone=<tz>]
 
 Options:
@@ -36,12 +37,14 @@ Commands:
   message       Show body of single message
   calendars     List Calendars
   events        List events, starting within last month by default, on specified calendar
+  event         Show detail of single event
   create-event  Create new event on the specified calendar
 
 Arguments:
   <QUERY>        Query for searching Gmail messages. See Ref[2]. [default: in:inbox]
   <MESSAGE_ID>   Identifier of the message in Gmail. Value of "id" in results of 'messages'.
   <CALENDAR_ID>  Identifier of the calendar. Value of "id" in results of 'calenders'. [default: (authorized Gmail address)]
+  <EVENT_ID>     Identifier of the event in Calendar. Value of "id" in results of 'events'.
   <COLOR_ID>     Specify color of the event. Value of "colorID" in results of "events".
   <text>         Free format text.
   <datetime>     A combined date-time value formatted according to RFC3339, e.g "2020-04-23T00:00:00Z"
@@ -108,6 +111,21 @@ func main() {
 			since = getLastMonth()
 		}
 		err := events.ListEvents(client, calendarID.(string), since.(string))
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+	} else if args["event"].(bool) {
+		calendarID := args["<CALENDAR_ID>"]
+		if calendarID == nil {
+			profile, err := auth.GetProfile(client)
+			if err != nil {
+				log.Fatal(err)
+				os.Exit(1)
+			}
+			calendarID = profile.EmailAddress
+		}
+		err := events.GetEvent(client, calendarID.(string), args["<EVENT_ID>"].(string))
 		if err != nil {
 			log.Fatal(err)
 			os.Exit(1)
