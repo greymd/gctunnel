@@ -64,7 +64,7 @@ func ListEvents(client *http.Client, calendarID string, since string) error {
 	}
 	pageToken := ""
 	for {
-		req := svc.Events.List(calendarID).Fields("items(id,colorId,start,end,summary)", "nextPageToken").TimeMin(since)
+		req := svc.Events.List(calendarID).Fields("items(id,colorId,start,end,summary)", "nextPageToken").TimeMin(since).SingleEvents(true)
 		if pageToken != "" {
 			req.PageToken(pageToken)
 		}
