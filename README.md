@@ -16,7 +16,7 @@ Usage:
   gctunnel messages [<QUERY>]
   gctunnel message <MESSAGE_ID>
   gctunnel calendars
-  gctunnel events [<CALENDAR_ID>] [--since=<datetime>]
+  gctunnel events [<CALENDAR_ID>] [--since=<datetime>] [--end=<datetime>]
   gctunnel event <EVENT_ID> [<CALENDAR_ID>]
   gctunnel create-event [<CALENDAR_ID>] --summary=<text> --start=<datetime> --end=<datetime> [--color=<COLOR_ID>] [--description=<text>] [--timezone=<tz>]
 
