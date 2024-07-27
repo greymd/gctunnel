@@ -22,7 +22,7 @@ Usage:
   gctunnel messages [<QUERY>]
   gctunnel message <MESSAGE_ID>
   gctunnel calendars
-  gctunnel events [<CALENDAR_ID>] [--since=<datetime>]
+  gctunnel events [<CALENDAR_ID>] [--since=<datetime>] [--end=<datetime>]
   gctunnel event <EVENT_ID> [<CALENDAR_ID>]
   gctunnel create-event [<CALENDAR_ID>] --summary=<text> --start=<datetime> --end=<datetime> [--color=<COLOR_ID>] [--description=<text>] [--timezone=<tz>]
 
@@ -110,7 +110,11 @@ func main() {
 		if since == nil {
 			since = getLastMonth()
 		}
-		err := events.ListEvents(client, calendarID.(string), since.(string))
+		end := args["--end"]
+		if end == nil {
+			end = getNextMonth()
+		}
+		err := events.ListEvents(client, calendarID.(string), since.(string), end.(string))
 		if err != nil {
 			log.Fatal(err)
 			os.Exit(1)
@@ -172,5 +176,11 @@ func main() {
 func getLastMonth() string {
 	now := time.Now()
 	then := now.AddDate(0, -1, 0)
+	return then.Format(time.RFC3339)
+}
+
+func getNextMonth() string {
+	now := time.Now()
+	then := now.AddDate(0, 1, 0)
 	return then.Format(time.RFC3339)
 }

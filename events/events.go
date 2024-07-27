@@ -57,14 +57,14 @@ func ListCalendars(client *http.Client) error {
 }
 
 // ListEvents ... List events
-func ListEvents(client *http.Client, calendarID string, since string) error {
+func ListEvents(client *http.Client, calendarID string, since string, end string) error {
 	svc, err := calendar.New(client)
 	if err != nil {
 		return fmt.Errorf("Unable to create Calendar service: %v", err)
 	}
 	pageToken := ""
 	for {
-		req := svc.Events.List(calendarID).Fields("items(id,colorId,start,end,summary)", "nextPageToken").TimeMin(since).SingleEvents(true)
+		req := svc.Events.List(calendarID).Fields("items(id,colorId,start,end,summary)", "nextPageToken").TimeMin(since).TimeMax(end).SingleEvents(true)
 		if pageToken != "" {
 			req.PageToken(pageToken)
 		}
