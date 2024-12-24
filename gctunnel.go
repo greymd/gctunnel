@@ -12,7 +12,7 @@ import (
 	"github.com/greymd/gctunnel/messages"
 )
 
-var appVersion = `1.1.0`
+var appVersion = `1.1.1`
 
 var usage = `
 Usage:
